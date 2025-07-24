@@ -1,19 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pluggy Status Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>Pluggy Connector Status</h1>
-            <p>Real-time status of our most important connectors</p>
-        </header>
-        <main id="dashboard"></main>
+    <div class="bar"></div>
+    <header>
+        <h1>Status de integrações Bancárias Mister Contador</h1>
+        <p>Acompanhamento em tempo real de integrações bancárias...</p>
+    </header>
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <label for="statusFilter">Filtrar por status:</label>
+        <select id="statusFilter" onchange="filtrarStatus()">
+            <option value="TODOS">Todos</option>
+            <option value="ONLINE">Online</option>
+            <option value="UNSTABLE">Instável</option>
+            <option value="OFFLINE">Offline</option>
+        </select>
+
+        <label for="searchInput" style="margin-left: 1rem;">Buscar Agência Bancária</label>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="buscarAgencia()" />
+            <i class="search-icon">&#128269;</i>
+        </div>
     </div>
+    <div class="card-body">
+        <div class="container">
+            <main id="dashboard"></main>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
+
 </html>
