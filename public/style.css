@@ -57,7 +57,7 @@ header h1 {
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin: 10px;
-  border-top: 5px solid #00015c;
+  border-top: 5px solid #00025cec;
 }
 
 .connector:hover {
@@ -161,4 +161,77 @@ input[type="text"] {
   color: #7f8c8d;
   pointer-events: none;
   font-size: 1.2rem;
+}
+
+/* Lista */
+#dashboard.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+#dashboard.list .connector-logo {
+  width: 50px;
+  height: 50px;
+  margin: 0;
+}
+
+.connector-name {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+#dashboard.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#dashboard.list .connector {
+  flex: 0 0 calc(50% - 1rem); /* Dois por linha */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  gap: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+#dashboard.grid .connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.toggle-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.toggle-icon:hover {
+  color: #000;
+}
+
+.toggle-icon.active {
+  color: #023fe9;
 }

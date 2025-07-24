@@ -93,3 +93,22 @@ function filtrarStatus() {
     }
   });
 }
+
+
+function setLayout(type) {
+  const dashboard = document.getElementById('dashboard');
+  dashboard.classList.remove('grid', 'list');
+  dashboard.classList.add(type);
+}
+
+function setLayout(tipo, el) {
+  const dashboard = document.getElementById("dashboard");
+  dashboard.className = tipo;
+  filtrarStatus();
+
+  // Alterna classe ativa nos ícones
+  document.querySelectorAll('.toggle-icon').forEach(icon => {
+    icon.classList.remove('active');
+  });
+  if (el) el.classList.add('active');
+}
