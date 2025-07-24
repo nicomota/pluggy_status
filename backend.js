@@ -10,7 +10,9 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const port = process.env.PORT || 3000;
+app.use(express.static('public'));
+
+const port = process.env.PORT || 3001;
 
 let connectors = [];
 let lastUpdated = null;
@@ -55,7 +57,26 @@ async function fetchConnectors() {
     const allConnectors = response.data.results;
     const misterConnectorIds = Object.keys(misterConnectors);
 
-    connectors = allConnectors.filter(connector => misterConnectorIds.includes(String(connector.id)));
+    const filteredConnectors = allConnectors.filter(connector =>
+      misterConnectorIds.includes(String(connector.id))
+    );
+
+    const connectorsMap = new Map();
+    filteredConnectors.forEach(connector => {
+      const baseName = connector.name.replace(' [OF]', '');
+      const isOF = connector.name.includes('[OF]');
+
+      if (!connectorsMap.has(baseName) || isOF) {
+        connectorsMap.set(baseName, {
+          id: connector.id,
+          name: connector.name,
+          imageUrl: connector.imageUrl,
+          health: connector.health,
+        });
+      }
+    });
+
+    connectors = Array.from(connectorsMap.values());
     lastUpdated = new Date();
     console.log('Connectors updated successfully.');
     
