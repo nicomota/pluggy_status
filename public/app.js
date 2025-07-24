@@ -3,12 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const ws = new WebSocket(`ws://${window.location.host}`);
 
     ws.onopen = () => {
-        console.log('Connected to WebSocket server');
+        console.log('Conectado ao servidor WebSocket');
     };
 
     ws.onmessage = event => {
         const message = JSON.parse(event.data);
-        console.log('Message received:', message);
+        console.log('Mensagem recebida:', message);
 
         if (message.type === 'initial' || message.type === 'update') {
             updateDashboard(message.data);
@@ -16,80 +16,71 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     ws.onclose = () => {
-        console.log('Disconnected from WebSocket server');
+        console.log('Desconectado do servidor WebSocket');
     };
 
+    let allConnectors = [];
+    let currentStatusFilter = 'TODOS';
+    let currentTypeFilter = 'TODOS';
+
     function updateDashboard(connectors) {
+        allConnectors = connectors;
+        renderDashboard();
+    }
+
+    function renderDashboard() {
         dashboard.innerHTML = '';
-        connectors.forEach(connector => {
+        const filteredConnectors = allConnectors.filter(connector => {
+            const status = connector.health?.status || 'OFFLINE';
+            const type = connector.type;
+            const name = connector.name.toLowerCase();
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+            const statusMatch = currentStatusFilter === 'TODOS' || status === currentStatusFilter;
+            const typeMatch = currentTypeFilter === 'TODOS' || type === currentTypeFilter;
+            const searchMatch = name.includes(searchInput);
+
+            return statusMatch && typeMatch && searchMatch;
+        });
+
+        filteredConnectors.forEach(connector => {
             const status = connector.health?.status || 'OFFLINE';
             const connectorElement = document.createElement('div');
             connectorElement.className = 'connector';
-            connectorElement.setAttribute("data-status", status); // 👈 ESSA LINHA FALTAVA
+            connectorElement.setAttribute("data-status", status);
+            connectorElement.setAttribute("data-type", connector.type);
+            const typeText = connector.type === 'Direct' ? 'Direto' : 'OpenFinance';
             connectorElement.innerHTML = `
                 <img src="${connector.imageUrl}" alt="${connector.name}" class="connector-logo">
                 <div class="connector-name">${connector.name}</div>
+                <div class="connector-type">Conector ${typeText}</div>
                 <div class="connector-status status-${status}">${status}</div>
             `;
             dashboard.appendChild(connectorElement);
-
         });
     }
-});
 
-
-const conectores = [
-  {
-    nome: "Banco Bmg Empresas",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Banco_BMG_logo.svg/512px-Banco_BMG_logo.svg.png",
-    status: "ONLINE"
-  },
-  {
-    nome: "Banco do Brasil Empresas",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Banco_do_Brasil_logo.svg/512px-Banco_do_Brasil_logo.svg.png",
-    status: "ONLINE"
-  },
-  {
-    nome: "Bradesco Empresas",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bradesco_logo.svg/512px-Bradesco_logo.svg.png",
-    status: "OFFLINE"
-  },
-  {
-    nome: "Caixa Econômica Federal Empresas",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Caixa_Econ%C3%B4mica_Federal_logo.svg/512px-Caixa_Econ%C3%B4mica_Federal_logo.svg.png",
-    status: "UNSTABLE"
-  }
-];
-
-function carregarConectores() {
-  const dashboard = document.getElementById("dashboard");
-  dashboard.innerHTML = "";
-
-  conectores.forEach(con => {
-    const div = document.createElement("div");
-    div.className = "connector";
-    div.setAttribute("data-status", con.status);
-
-    div.innerHTML = `
-      <img src="${con.logo}" class="connector-logo" alt="${con.nome}" />
-      <div class="connector-name">${con.nome}</div>
-      <div class="connector-status status-${con.status}">${con.status}</div>
-    `;
-
-    dashboard.appendChild(div);
-  });
-}
-
-function filtrarStatus() {
-  const filtro = document.getElementById("statusFilter").value;
-  const conectores = document.querySelectorAll(".connector");
-
-  conectores.forEach(connector => {
-    const status = connector.getAttribute("data-status");
-    if (filtro === "TODOS" || status === filtro) {
-      connector.style.display = "flex";
-    } else {
-      connector.style.display = "none";
+    window.filtrarStatus = function() {
+        currentStatusFilter = document.getElementById('statusFilter').value;
+        renderDashboard();
     }
-  });
-}
+
+    window.filtrarPorTipo = function(type) {
+        currentTypeFilter = type;
+        document.querySelectorAll('.button-filter').forEach(button => {
+            button.classList.remove('active');
+        });
+        let buttonId;
+        if (type === 'TODOS') {
+            buttonId = 'btnTodos';
+        } else {
+            buttonId = `btn${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        }
+        document.getElementById(buttonId).classList.add('active');
+        renderDashboard();
+    }
+
+    window.buscarAgencia = function() {
+        renderDashboard();
+    }
+});

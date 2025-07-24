@@ -12,7 +12,7 @@ const wss = new WebSocket.Server({ server });
 
 app.use(express.static('public'));
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 let connectors = [];
 let lastUpdated = null;
@@ -29,25 +29,25 @@ async function getApiKey() {
       clientSecret: PLUGGY_CLIENT_SECRET,
     });
     apiKey = response.data.apiKey;
-    console.log('API Key obtained successfully.');
+    console.log('API Key obtida com sucesso.');
   } catch (error) {
-    console.error('Error getting API Key:', error.message);
+    console.error('Erro ao obter a API Key:', error.message);
     apiKey = null;
   }
 }
 
 async function fetchConnectors() {
   if (!apiKey) {
-    console.log('API Key not available, trying to get a new one...');
+    console.log('API Key não disponível, tentando obter uma nova...');
     await getApiKey();
     if (!apiKey) {
-      console.error('Could not fetch connectors because API Key is unavailable.');
+      console.error('Não foi possível buscar os conectores porque a API Key não está disponível.');
       return;
     }
   }
 
   try {
-    console.log('Fetching connectors...');
+    console.log('Buscando conectores...');
     const response = await axios.get(`${PLUGGY_HOST}/connectors`, {
       headers: {
         'X-API-KEY': apiKey,
@@ -61,24 +61,19 @@ async function fetchConnectors() {
       misterConnectorIds.includes(String(connector.id))
     );
 
-    const connectorsMap = new Map();
-    filteredConnectors.forEach(connector => {
-      const baseName = connector.name.replace(' [OF]', '');
-      const isOF = connector.name.includes('[OF]');
-
-      if (!connectorsMap.has(baseName) || isOF) {
-        connectorsMap.set(baseName, {
-          id: connector.id,
-          name: connector.name,
-          imageUrl: connector.imageUrl,
-          health: connector.health,
-        });
-      }
+    connectors = filteredConnectors.map(connector => {
+      const misterConnectorName = misterConnectors[connector.id];
+      const isOF = misterConnectorName.includes('[OF]');
+      return {
+        id: connector.id,
+        name: connector.name.replace(' [OF]', ''),
+        type: isOF ? 'OpenFinance' : 'Direct',
+        imageUrl: connector.imageUrl,
+        health: connector.health,
+      };
     });
-
-    connectors = Array.from(connectorsMap.values());
     lastUpdated = new Date();
-    console.log('Connectors updated successfully.');
+    console.log('Conectores atualizados com sucesso.');
     
     // Broadcast the update to all connected clients
     wss.clients.forEach(client => {
@@ -89,13 +84,13 @@ async function fetchConnectors() {
 
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      console.log('API Key expired or invalid. Requesting a new one.');
+      console.log('API Key expirada ou inválida. Solicitando uma nova.');
       await getApiKey();
       if (apiKey) {
         await fetchConnectors();
       }
     } else {
-      console.error('Error fetching connectors:', error.message);
+      console.error('Erro ao buscar conectores:', error.message);
     }
   }
 }
@@ -115,16 +110,16 @@ app.get('/connectors', (req, res) => {
 });
 
 wss.on('connection', ws => {
-  console.log('Client connected');
+  console.log('Cliente conectado');
   // Send the current list of connectors to the new client
   ws.send(JSON.stringify({ type: 'initial', data: connectors }));
   ws.on('close', () => {
-    console.log('Client disconnected');
+    console.log('Cliente desconectado');
   });
 });
 
 server.listen(port, async () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Servidor rodando na porta ${port}`);
   await getApiKey();
   await fetchConnectors();
 });
