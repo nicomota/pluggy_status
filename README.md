@@ -7,8 +7,9 @@ Este projeto é um serviço de backend que monitora o status de uma lista pré-d
 
 ## Funcionalidades
 
+-   Dashboard moderno e responsivo para visualização do status dos conectores.
 -   Busca os status dos conectores da API da Pluggy a cada 5 minutos.
--   Filtra os conectores com base em uma lista pré-definida.
+-   Filtra os conectores com base em uma lista pré-definida, com prioridade para conectores Open Finance.
 -   Fornece uma API REST para obter o status atual dos conectores.
 -   Usa WebSockets para enviar atualizações em tempo real para os clientes conectados.
 
@@ -43,6 +44,7 @@ Este projeto é um serviço de backend que monitora o status de uma lista pré-d
     host=https://api.pluggy.ai
     CLIENT_ID=seu_client_id
     CLIENT_SECRET=seu_client_secret
+    PORT=3001
     ```
 
     Substitua `seu_client_id` e `seu_client_secret` com suas credenciais reais da API da Pluggy.
@@ -55,7 +57,11 @@ Para iniciar o servidor, execute o seguinte comando:
 npm start
 ```
 
-O servidor será iniciado na porta 3000 (ou na porta especificada na variável de ambiente `PORT`).
+O servidor será iniciado na porta 3001 (ou na porta especificada na variável de ambiente `PORT`).
+
+## Dashboard
+
+Para visualizar o dashboard, abra o seu navegador e acesse `http://localhost:3001`.
 
 ## Endpoints da API
 
@@ -70,10 +76,10 @@ O servidor será iniciado na porta 3000 (ou na porta especificada na variável d
     Retorna um objeto JSON com a hora da última atualização e o número de conectores monitorados.
 
 ### API WebSocket
-   
+
 O servidor fornece atualizações em tempo real através de uma conexão WebSocket.
 
--   **URL de Conexão**: `ws://localhost:3000`
+-   **URL de Conexão**: `ws://localhost:3001`
 
 -   **Mensagens**:
     -   Quando um cliente se conecta, ele receberá uma mensagem `initial` com a lista atual de conectores.
@@ -96,23 +102,6 @@ O servidor fornece atualizações em tempo real através de uma conexão WebSock
 
 ## Como Testar
 
-### Testando com `curl`
-
-Você pode usar o `curl` para testar os endpoints da API REST no terminal.
-
--   **Para obter os conectores:**
-    ```bash
-    curl http://localhost:3000/connectors
-    ```
--   **Para obter o status:**
-    ```bash
-    curl http://localhost:3000/status
-    ```
-
-### Testando com um Navegador
-
-Você pode usar o arquivo `test.html` incluído no projeto para testar a conexão WebSocket. Basta abrir o arquivo em seu navegador.
-
 ### Testando com o Postman
 
 #### API REST
@@ -120,14 +109,14 @@ Você pode usar o arquivo `test.html` incluído no projeto para testar a conexã
 1.  Abra o Postman e crie uma nova requisição.
 2.  Selecione o método `GET`.
 3.  Insira a URL do endpoint que deseja testar:
-    -   `http://localhost:3000/connectors`
-    -   `http://localhost:3000/status`
+    -   `http://localhost:3001/connectors`
+    -   `http://localhost:3001/status`
 4.  Clique em "Send" para enviar a requisição. A resposta aparecerá no painel inferior.
 
 #### API WebSocket
 
 1.  Abra o Postman e crie uma nova requisição WebSocket.
-2.  Insira a URL de conexão: `ws://localhost:3000`.
+2.  Insira a URL de conexão: `ws://localhost:3001`.
 3.  Clique em "Connect".
 4.  Uma vez conectado, você verá as mensagens do servidor na seção "Messages". Você receberá a mensagem `initial` imediatamente e as mensagens `update` a cada 5 minutos.
 
