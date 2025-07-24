@@ -12,7 +12,7 @@ const wss = new WebSocket.Server({ server });
 
 app.use(express.static('public'));
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 let connectors = [];
 let lastUpdated = null;

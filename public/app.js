@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dashboard = document.getElementById('dashboard');
-    const ws = new WebSocket(`ws://${window.location.hostname}:3001`);
+    const ws = new WebSocket(`ws://${window.location.host}`);
 
     ws.onopen = () => {
         console.log('Connected to WebSocket server');
