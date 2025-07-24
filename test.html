@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de WebSocket</title>
+</head>
+<body>
+    <h1>Conectores</h1>
+    <ul id="connectors-list"></ul>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3000');
+        const connectorsList = document.getElementById('connectors-list');
+
+        ws.onmessage = event => {
+            const message = JSON.parse(event.data);
+            console.log('Mensagem recebida:', message);
+
+            if (message.type === 'initial' || message.type === 'update') {
+                connectorsList.innerHTML = '';
+                message.data.forEach(connector => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${connector.name} - Status: ${connector.health?.status || 'N/A'}`;
+                    connectorsList.appendChild(listItem);
+                });
+            }
+        };
+
+        ws.onopen = () => {
+            console.log('Conectado ao servidor WebSocket');
+        };
+
+        ws.onclose = () => {
+            console.log('Desconectado do servidor WebSocket');
+        };
+    </script>
+</body>
+</html>
