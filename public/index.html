@@ -13,22 +13,35 @@
 <body>
     <div class="bar"></div>
     <header>
-        <h1>Status de integrações Bancárias Mister Contador</h1>
-        <p>Acompanhamento em tempo real de integrações bancárias...</p>
+        <h1>Status de Integrações Bancárias</h1>
+        <p>Acompanhamento em tempo real do status dos conectores Pluggy.</p>
     </header>
-    <div style="text-align: center; margin-bottom: 1.5rem;">
-        <label for="statusFilter">Filtrar por status:</label>
-        <select id="statusFilter" onchange="filtrarStatus()">
-            <option value="TODOS">Todos</option>
-            <option value="ONLINE">Online</option>
-            <option value="UNSTABLE">Instável</option>
-            <option value="OFFLINE">Offline</option>
-        </select>
+    <div class="filters-container">
+        <div class="filter-group">
+            <label for="statusFilter">Filtrar por status:</label>
+            <select id="statusFilter" onchange="filtrarStatus()">
+                <option value="TODOS">Todos</option>
+                <option value="ONLINE">Online</option>
+                <option value="UNSTABLE">Instável</option>
+                <option value="OFFLINE">Offline</option>
+            </select>
+        </div>
 
-        <label for="searchInput" style="margin-left: 1rem;">Buscar Agência Bancária</label>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="buscarAgencia()" />
-            <i class="search-icon">&#128269;</i>
+        <div class="filter-group">
+            <label>Filtrar por tipo:</label>
+            <div class="button-group">
+                <button id="btnTodos" class="button-filter active" onclick="filtrarPorTipo('TODOS')">Todos</button>
+                <button id="btnDirect" class="button-filter" onclick="filtrarPorTipo('Direct')">Direto</button>
+                <button id="btnOpenFinance" class="button-filter" onclick="filtrarPorTipo('OpenFinance')">OpenFinance</button>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label for="searchInput">Buscar Agência Bancária:</label>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Pesquisar" onkeyup="buscarAgencia()" />
+                <i class="search-icon">&#128269;</i>
+            </div>
         </div>
         
         <div class="view-toggle" style="text-align: center; margin-bottom: 1.5rem;">
