@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # pluggy_status
 =======
 # Visualizador de Status da Pluggy
@@ -123,4 +122,3 @@ O servidor fornece atualizações em tempo real através de uma conexão WebSock
 ## Customizando a Lista de Conectores
 
 A lista de conectores a serem monitorados é definida no arquivo `conectorsMister.js`. Você pode modificar este arquivo para adicionar ou remover conectores conforme necessário. O arquivo exporta um objeto onde as chaves são os IDs dos conectores e os valores são os nomes dos conectores.
->>>>>>> backend
