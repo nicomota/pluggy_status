@@ -190,7 +190,7 @@ input[type="text"] {
 
 .search-box input[type="text"] {
   padding: 0.5rem 2.5rem 0.5rem 1rem;
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
   border-radius: 1.5rem;
   font-size: 1rem;
   outline: none;
