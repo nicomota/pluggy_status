@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dashboard = document.getElementById('dashboard');
+    const modal = document.getElementById('docModal');
+    const modalBankName = document.getElementById('modalBankName');
+    const modalBody = document.getElementById('modalBody');
+    const closeButton = document.querySelector('.close-button');
+
     const ws = new WebSocket(`ws://${window.location.host}`);
 
     ws.onopen = () => {
@@ -8,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ws.onmessage = event => {
         const message = JSON.parse(event.data);
-        console.log('Mensagem recebida:', message);
-
         if (message.type === 'initial' || message.type === 'update') {
             updateDashboard(message.data);
         }
@@ -50,16 +53,89 @@ document.addEventListener('DOMContentLoaded', () => {
             connectorElement.setAttribute("data-status", status);
             connectorElement.setAttribute("data-type", connector.type);
             const typeText = connector.type === 'Direct' ? 'Direto' : 'OpenFinance';
+            
             connectorElement.innerHTML = `
                 <img src="${connector.imageUrl}" alt="${connector.name}" class="connector-logo">
                 <div class="connector-name">${connector.name}</div>
                 <div class="connector-type">Conector ${typeText}</div>
                 <div class="connector-status status-${status}">${status}</div>
             `;
+
+            connectorElement.addEventListener('click', () => openModal(connector));
             dashboard.appendChild(connectorElement);
         });
     }
 
+    function openModal(connector) {
+        const bankData = documentationData[connector.name];
+        modalBankName.textContent = connector.name;
+        modalBody.innerHTML = ''; // Clear previous content
+
+        if (!bankData) {
+            modalBody.innerHTML = '<p>Não há dados de documentação detalhada para este conector.</p>';
+            modal.style.display = 'block';
+            return;
+        }
+
+        if (bankData.integration) {
+            modalBody.appendChild(createIntegrationTable(bankData.integration));
+        }
+        if (bankData.openFinance) {
+            modalBody.appendChild(createOpenFinanceTable(bankData.openFinance));
+        }
+        
+        modal.style.display = 'block';
+    }
+
+    function createIcon(status) {
+        if (status === true) return '<i class="bi bi-check-circle-fill icon icon-true"></i>';
+        if (status === false) return '<i class="bi bi-x-circle-fill icon icon-false"></i>';
+        if (status === 'partial') return '<i class="bi bi-exclamation-triangle-fill icon icon-partial"></i>';
+        return status; // Return text if not a boolean
+    }
+
+    function createIntegrationTable(data) {
+        const section = document.createElement('div');
+        section.className = 'doc-section';
+        let rows = '';
+        for (const [key, value] of Object.entries(data)) {
+            rows += `<tr><td>${key}</td><td>${createIcon(value)}</td></tr>`;
+        }
+        section.innerHTML = `
+            <h3>Integração Direta</h3>
+            <table class="doc-table">${rows}</table>
+        `;
+        return section;
+    }
+
+    function createOpenFinanceTable(data) {
+        const section = document.createElement('div');
+        section.className = 'doc-section';
+        let rows = '';
+        for (const [key, value] of Object.entries(data)) {
+            rows += `<tr><td>${key}</td><td>${createIcon(value)}</td></tr>`;
+        }
+        section.innerHTML = `
+            <h3>Open Finance</h3>
+            <table class="doc-table">${rows}</table>
+            <p style="font-size: 0.8rem; margin-top: 1rem;">
+                <i class="bi bi-check-circle-fill icon-true"></i> Dados são disponibilizados<br>
+                <i class="bi bi-exclamation-triangle-fill icon-partial"></i> Dados são disponibilizados, dependendo do pacote de serviços<br>
+                <i class="bi bi-x-circle-fill icon-false"></i> Não há disponibilização dos documentos
+            </p>
+        `;
+        return section;
+    }
+
+    // Close Modal Logic
+    closeButton.onclick = () => modal.style.display = 'none';
+    window.onclick = event => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+
+    // Global functions for filters
     window.filtrarStatus = function() {
         currentStatusFilter = document.getElementById('statusFilter').value;
         renderDashboard();
@@ -70,13 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.button-filter').forEach(button => {
             button.classList.remove('active');
         });
-        let buttonId;
-        if (type === 'TODOS') {
-            buttonId = 'btnTodos';
-        } else {
-            buttonId = `btn${type.charAt(0).toUpperCase() + type.slice(1)}`;
-        }
-        document.getElementById(buttonId).classList.add('active');
+        document.getElementById(`btn${type}`).classList.add('active');
         renderDashboard();
     }
 
