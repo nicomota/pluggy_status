@@ -318,7 +318,8 @@ input[type="text"] {
 
 .connector {
     cursor: pointer; /* Add cursor pointer to indicate it's clickable */
-=======
+}
+
 /* Lista */
 #dashboard.grid {
   display: grid;
