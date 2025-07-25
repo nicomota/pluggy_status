@@ -77,11 +77,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (bankData.integration) {
+        let tableAdded = false;
+        // Mostra a tabela específica baseada no tipo do conector
+        if (connector.type === 'Direct' && bankData.integration) {
             modalBody.appendChild(createIntegrationTable(bankData.integration));
-        }
-        if (bankData.openFinance) {
+            tableAdded = true;
+        } else if (connector.type === 'OpenFinance' && bankData.openFinance) {
             modalBody.appendChild(createOpenFinanceTable(bankData.openFinance));
+            tableAdded = true;
+        }
+
+        // Fallback se não encontrar tabela para o tipo específico
+        if (!tableAdded) {
+            modalBody.innerHTML = `<p>Não há dados de documentação para o tipo de conector '${connector.type}'.</p>`;
         }
         
         modal.style.display = 'block';
