@@ -33,11 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDashboard() {
         dashboard.innerHTML = '';
+
+        const searchInput = document.getElementById('searchInput')?.value.toLowerCase() || '';
+
         const filteredConnectors = allConnectors.filter(connector => {
-            const status = connector.health?.status || 'OFFLINE';
+            const status = (connector.health?.status || 'OFFLINE').toUpperCase();
             const type = connector.type;
             const name = connector.name.toLowerCase();
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
 
             const statusMatch = currentStatusFilter === 'TODOS' || status === currentStatusFilter;
             const typeMatch = currentTypeFilter === 'TODOS' || type === currentTypeFilter;
@@ -47,13 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         filteredConnectors.forEach(connector => {
-            const status = connector.health?.status || 'OFFLINE';
+            const status = (connector.health?.status || 'OFFLINE').toUpperCase();
             const connectorElement = document.createElement('div');
             connectorElement.className = 'connector';
             connectorElement.setAttribute("data-status", status);
             connectorElement.setAttribute("data-type", connector.type);
             const typeText = connector.type === 'Direct' ? 'Direto' : 'OpenFinance';
-            
+
             connectorElement.innerHTML = `
                 <img src="${connector.imageUrl}" alt="${connector.name}" class="connector-logo">
                 <div class="connector-name">${connector.name}</div>
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function openModal(connector) {
         const bankData = documentationData[connector.name];
         modalBankName.textContent = connector.name;
-        modalBody.innerHTML = ''; // Clear previous content
+        modalBody.innerHTML = '';
 
         if (!bankData) {
             modalBody.innerHTML = '<p>Não há dados de documentação detalhada para este conector.</p>';
@@ -77,16 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Mostra a tabela específica baseada no tipo do conector
         if (connector.type === 'Direct' && bankData.integration) {
             modalBody.appendChild(createIntegrationTable(bankData.integration));
         } else if (connector.type === 'OpenFinance' && bankData.openFinance) {
             modalBody.appendChild(createOpenFinanceTable(bankData.openFinance));
         } else {
-            // Fallback se não encontrar tabela para o tipo específico
             modalBody.innerHTML = `<p>Não há dados de documentação para o tipo de conector '${connector.type}'.</p>`;
         }
-        
+
         modal.style.display = 'block';
     }
 
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (status === true) return '<i class="bi bi-check-circle-fill icon icon-true"></i>';
         if (status === false) return '<i class="bi bi-x-circle-fill icon icon-false"></i>';
         if (status === 'partial') return '<i class="bi bi-exclamation-triangle-fill icon icon-partial"></i>';
-        return status; // Return text if not a boolean
+        return status;
     }
 
     function createIntegrationTable(data) {
@@ -130,46 +130,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return section;
     }
 
-    // Close Modal Logic
     closeButton.onclick = () => modal.style.display = 'none';
     window.onclick = event => {
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = 'none';
         }
     };
 
-    // Global functions for filters
-    window.filtrarStatus = function() {
-        currentStatusFilter = document.getElementById('statusFilter').value;
+    window.filtrarStatus = function () {
+        currentStatusFilter = document.getElementById('statusFilter').value.toUpperCase();
         renderDashboard();
     }
 
-    window.filtrarPorTipo = function(type) {
+    window.filtrarPorTipo = function (type) {
         currentTypeFilter = type;
         document.querySelectorAll('.button-filter').forEach(button => {
             button.classList.remove('active');
         });
-        document.getElementById(`btn${type}`).classList.add('active');
+        const activeBtn = document.getElementById(`btn${type}`);
+        if (activeBtn) activeBtn.classList.add('active');
         renderDashboard();
     }
 
-    window.buscarAgencia = function() {
+    window.buscarAgencia = function () {
         renderDashboard();
     }
 });
 
 function atualizarGridColunas(colunas) {
     const dashboard = document.getElementById('dashboard');
-  
-    // Remove classes antigas
+
     for (let i = 5; i <= 8; i++) {
-      dashboard.classList.remove(`grid-cols-${i}`);
+        dashboard.classList.remove(`grid-cols-${i}`);
     }
-  
-    // Adiciona a nova
+
     dashboard.classList.add(`grid-cols-${colunas}`);
-  
-    // Atualiza botões ativos
+
     document.querySelectorAll('.grid-btn').forEach(btn => btn.classList.remove('active'));
     this.classList.add('active');
-  }
+}
