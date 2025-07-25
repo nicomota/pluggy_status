@@ -57,7 +57,7 @@ header h1 {
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin: 10px;
-  border-top: 5px solid #00025cec;
+  border-top: 5px solid #00015c;
 }
 
 .connector:hover {
