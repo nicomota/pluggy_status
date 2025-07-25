@@ -162,3 +162,19 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDashboard();
     }
 });
+
+function atualizarGridColunas(colunas) {
+    const dashboard = document.getElementById('dashboard');
+  
+    // Remove classes antigas
+    for (let i = 5; i <= 8; i++) {
+      dashboard.classList.remove(`grid-cols-${i}`);
+    }
+  
+    // Adiciona a nova
+    dashboard.classList.add(`grid-cols-${colunas}`);
+  
+    // Atualiza botões ativos
+    document.querySelectorAll('.grid-btn').forEach(btn => btn.classList.remove('active'));
+    this.classList.add('active');
+  }
