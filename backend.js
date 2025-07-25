@@ -66,7 +66,7 @@ async function fetchConnectors() {
       const isOF = misterConnectorName.includes('[OF]');
       return {
         id: connector.id,
-        name: connector.name.replace(' [OF]', ''),
+        name: misterConnectorName.replace(' [OF]', ''),
         type: isOF ? 'OpenFinance' : 'Direct',
         imageUrl: connector.imageUrl,
         health: connector.health,
