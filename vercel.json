@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "backend.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["conectorsMister.js"]
+      }
     },
     {
       "src": "public/**",
