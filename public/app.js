@@ -5,22 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('modalBody');
     const closeButton = document.querySelector('.close-button');
 
-    const ws = new WebSocket(`ws://${window.location.host}`);
+    // Fetch inicial dos conectores
+    fetchConnectors();
+    
+    // Atualiza a cada 5 minutos
+    setInterval(fetchConnectors, 5 * 60 * 1000);
 
-    ws.onopen = () => {
-        console.log('Conectado ao servidor WebSocket');
-    };
-
-    ws.onmessage = event => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'initial' || message.type === 'update') {
-            updateDashboard(message.data);
+    async function fetchConnectors() {
+        try {
+            const response = await fetch('/api/connectors');
+            const connectors = await response.json();
+            updateDashboard(connectors);
+        } catch (error) {
+            console.error('Erro ao buscar conectores:', error);
         }
-    };
-
-    ws.onclose = () => {
-        console.log('Desconectado do servidor WebSocket');
-    };
+    }
 
     let allConnectors = [];
     let currentStatusFilter = 'TODOS';
