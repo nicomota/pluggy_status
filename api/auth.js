@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
     
     if (password === '@mister2025' && email.endsWith('@equipe.mistercontador.com.br')) {
       // Definir cookie de sessão

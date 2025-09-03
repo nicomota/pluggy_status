@@ -23,6 +23,10 @@
     {
       "source": "/status",
       "destination": "/api/status"
+    },
+    {
+      "source": "/connectors",
+      "destination": "/api/connectors"
     }
   ]
 }
