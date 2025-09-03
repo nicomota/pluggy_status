@@ -4,16 +4,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBankName = document.getElementById('modalBankName');
     const modalBody = document.getElementById('modalBody');
     const closeButton = document.querySelector('.close-button');
+    const logoutBtn = document.getElementById('logoutBtn');
 
+    // Configurar logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+
+    // Buscar informações do usuário
+    fetchUserInfo();
+    
     // Fetch inicial dos conectores
     fetchConnectors();
     
     // Atualiza a cada 5 minutos
     setInterval(fetchConnectors, 5 * 60 * 1000);
 
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/user');
+            if (response.ok) {
+                const user = await response.json();
+                const userEmailElement = document.getElementById('userEmail');
+                if (userEmailElement) {
+                    userEmailElement.textContent = user.email;
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao buscar informações do usuário:', error);
+        }
+    }
+
     async function fetchConnectors() {
         try {
-            const response = await fetch('/api/connectors');
+            const response = await fetch('/connectors');
             const connectors = await response.json();
             updateDashboard(connectors);
         } catch (error) {
@@ -167,4 +191,23 @@ function atualizarGridColunas(colunas) {
 
     document.querySelectorAll('.grid-btn').forEach(btn => btn.classList.remove('active'));
     this.classList.add('active');
+}
+
+async function logout() {
+    try {
+        const response = await fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            window.location.href = '/login';
+        } else {
+            console.error('Erro ao fazer logout');
+        }
+    } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+    }
 }
