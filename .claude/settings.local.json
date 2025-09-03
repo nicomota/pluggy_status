@@ -5,7 +5,9 @@
       "Bash(pkill:*)",
       "Bash(taskkill:*)",
       "Bash(npm start)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(git revert:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
