@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const axios = require('axios');
 const cron = require('node-cron');
 const http = require('http');
@@ -9,6 +10,58 @@ const misterConnectors = require('./conectorsMister.js');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'mister-pluggy-secret-2025',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: false, // false para desenvolvimento local
+    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+  }
+}));
+
+// Middleware de autenticação
+function requireAuth(req, res, next) {
+  if (req.session && req.session.authenticated) {
+    return next();
+  } else {
+    return res.status(401).redirect('/login');
+  }
+}
+
+// Rota de login
+app.get('/login', (req, res) => {
+  if (req.session && req.session.authenticated) {
+    return res.redirect('/');
+  }
+  res.sendFile(__dirname + '/public/login.html');
+});
+
+// Rota de autenticação
+app.post('/auth', (req, res) => {
+  const { email, password } = req.body;
+  
+  if (password === '@mister2025' && email.endsWith('@equipe.mistercontador.com.br')) {
+    req.session.authenticated = true;
+    req.session.email = email;
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false, message: 'Credenciais inválidas' });
+  }
+});
+
+// Rota de logout
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ success: false });
+    }
+    res.json({ success: true });
+  });
+});
 
 app.use(express.static('public'));
 
@@ -98,15 +151,28 @@ async function fetchConnectors() {
 // Schedule to run every 5 minutes
 cron.schedule('*/5 * * * *', fetchConnectors);
 
-app.get('/status', (req, res) => {
+// Rota principal protegida
+app.get('/', requireAuth, (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/status', requireAuth, (req, res) => {
   res.json({
     lastUpdated,
     connectorsCount: connectors.length,
   });
 });
 
-app.get('/connectors', (req, res) => {
+app.get('/connectors', requireAuth, (req, res) => {
   res.json(connectors);
+});
+
+// Rota para obter informações do usuário
+app.get('/user', requireAuth, (req, res) => {
+  res.json({
+    email: req.session.email,
+    authenticated: true
+  });
 });
 
 wss.on('connection', ws => {

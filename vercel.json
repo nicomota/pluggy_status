@@ -1,1 +1,32 @@
-{}
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/login",
+      "destination": "/api/login"
+    },
+    {
+      "source": "/auth",
+      "destination": "/api/auth"
+    },
+    {
+      "source": "/logout",
+      "destination": "/api/logout"
+    },
+    {
+      "source": "/user",
+      "destination": "/api/user"
+    },
+    {
+      "source": "/status",
+      "destination": "/api/status"
+    },
+    {
+      "source": "/connectors",
+      "destination": "/api/connectors"
+    }
+  ]
+}
