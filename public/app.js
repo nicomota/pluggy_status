@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchConnectors() {
         try {
-            const response = await fetch('/api/connectors');
+            const response = await fetch('/connectors');
             const connectors = await response.json();
             updateDashboard(connectors);
         } catch (error) {
