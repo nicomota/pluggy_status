@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchConnectors() {
         try {
-            const response = await fetch('/connectors');
+            // Detecta se estamos no Vercel ou local
+            const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('vercel.com');
+            const endpoint = isVercel ? '/api/connectors' : '/connectors';
+
+            const response = await fetch(endpoint);
             const connectors = await response.json();
             updateDashboard(connectors);
         } catch (error) {

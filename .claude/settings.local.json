@@ -7,7 +7,9 @@
       "Bash(taskkill:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(cmd //c:*)"
+      "Bash(cmd //c:*)",
+      "Bash(npm start)",
+      "Bash(set PORT=3002)"
     ],
     "deny": [],
     "ask": []
