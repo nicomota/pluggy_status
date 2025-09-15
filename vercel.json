@@ -27,6 +27,18 @@
     {
       "source": "/connectors",
       "destination": "/api/connectors"
+    },
+    {
+      "source": "/style.css",
+      "destination": "/api/style.css"
+    },
+    {
+      "source": "/app.js",
+      "destination": "/api/app.js"
+    },
+    {
+      "source": "/data.js",
+      "destination": "/api/data.js"
     }
   ]
 }
